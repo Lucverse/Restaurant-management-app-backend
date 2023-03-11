@@ -6,6 +6,7 @@ const app = express();
 
 // connection starts
 const User = require("./models/User");
+const Post = require('./models/Post');
 const mongoose = require("mongoose");
 
 mongoose.connect(process.env.MONGOURI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -23,6 +24,24 @@ app.get('/users', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+app.get('/post', async (req, res) => {
+    try {
+        const data = await Post.find({});
+        res.status(200).send(data);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
+});
+app.post('/post', async (req, res)=>{
+    try{
+        const {title, body }= req.body;
+        
+    }
+    catch(err){
+        console.log(err);
+    }
+})
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
