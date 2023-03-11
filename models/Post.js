@@ -5,7 +5,7 @@ const Post = mongoose.model(
   new mongoose.Schema(
     {
       title: String,
-      body: String,      
+      body: String,
     },
     {
       timestamps: true,
