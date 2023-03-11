@@ -9,7 +9,7 @@ const app = express();
 const User = require("./models/User");
 const mongoose = require("mongoose");
 
-mongoose.Promise = global.Promise;
+// mongoose.Promise = global.Promise;
 const db = {};
 db.mongoose = mongoose;
 db.mongoose
