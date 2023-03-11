@@ -8,23 +8,10 @@ const app = express();
 const User = require("./models/User");
 const mongoose = require("mongoose");
 
-// mongoose.Promise = global.Promise;
-const db = {};
-db.mongoose = mongoose;
-db.mongoose
-    .connect(process.env.MONGOURI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
-    .then(() => {
-        console.log("Successfully connect to MongoDB.");
-    })
-    .catch((err) => {
-        console.error("Connection error", err);
-        process.exit();
-    });
+mongoose.connect(process.env.MONGOURI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log("Successfully connect to MongoDB."))
+    .catch(err => console.error(err));
 // connection ends
-
 
 // get all users
 app.get('/users', async (req, res) => {
