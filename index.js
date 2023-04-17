@@ -1,14 +1,15 @@
 // for using dotenv files
 require("dotenv").config();
 
+const cors = require("cors"); // Import cors middleware
 const express = require('express');
 const bodyParser = require("body-parser");
 const app = express();
 app.use(bodyParser.json());
+app.use(cors()); // Use cors middleware to enable CORS
 
 // connection starts
 const User = require("./models/User");
-const Post = require('./models/Post');
 const mongoose = require("mongoose");
 
 mongoose.connect(process.env.MONGOURI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -26,54 +27,28 @@ app.get('/users', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
-app.get('/post', async (req, res) => {
+
+app.post('/users', async (req, res) => {
     try {
-        const data = await Post.find({});
-        res.status(200).send(data);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Server error');
-    }
-});
-app.post('/post', async (req, res) => {
-    try {
-        const { title, body } = req.body;
-        const newPost = new Post({
-            title, // means title : title
-            body    // means body : body
+        const { fullName, email, password } = req.body;
+        const newUser = new User({
+            fullName,
+            email,
+            password
         });
-        const response = newPost.save();
-        res.send({ message: "Post is created successfully!" });
+        const response = newUser.save();
+        res.send({ message: "User is registered successfully!" });
     }
     catch (err) {
         console.log(err);
     }
 })
-// Update a post
-app.put('/post/:id', async (req, res) => {
-    try {
-        const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        res.send({ message: "Post updated successfully!", post: updatedPost });
-    } catch (err) {
-        console.log(err);
-    }
-});
 
-// Delete a post
-app.delete('/post/:id', async (req, res) => {
-    try {
-        const deletedPost = await Post.findByIdAndDelete(req.params.id);
-        res.send({ message: "Post deleted successfully!", post: deletedPost });
-    } catch (err) {
-        console.log(err);
-    }
-});
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+    res.send('expense tracker app backend');
 });
 
-// function starts the server (necessary)
-app.listen(3000, () => {
-    console.log('Server listening on port 3000');
+app.listen(3002, () => {
+    console.log('Server listening on port 3002');
 });
