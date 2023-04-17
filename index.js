@@ -27,32 +27,36 @@ app.get('/users', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
-
 app.post('/users', async (req, res) => {
     try {
-        const { fullName, email, password, username, userType } = req.body;
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).send({ message: 'Email already exists' });
-        }
-
-        const newUser = new User({
-            fullName,
-            email,
-            password,
-            username,
-            userType
-        });
-
-        const response = await newUser.save();
-        res.send({ message: 'User is registered successfully!' });
+      const { fullName, email, password, username, userType } = req.body;
+      const existingUserEmail = await User.findOne({ email });
+      const existingUsername = await User.findOne({ username });
+  
+      if (existingUserEmail) {
+        return res.status(400).send({ error: 'Email already in use' });
+      }
+  
+      if (existingUsername) {
+        return res.status(400).send({ error: 'Username already in use' });
+      }
+  
+      const newUser = new User({
+        fullName,
+        email,
+        password,
+        username,
+        userType
+      });
+  
+      const response = await newUser.save();
+      res.send({ message: 'User is registered successfully!', username: newUser.username }); // Include username in the response
     } catch (err) {
-        console.log(err);
-        res.status(500).send({ message: 'Internal server error' });
+      console.log(err);
+      res.status(500).send({ message: 'Internal server error' });
     }
-});
-
-
+  });
+  
 app.get('/', (req, res) => {
     res.send('expense tracker app backend');
 });
