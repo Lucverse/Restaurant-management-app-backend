@@ -13,6 +13,9 @@ const User = mongoose.model("User",
         password: {
             type: String,
             required: true
+        }, userType: {
+            type: String,
+            required: true
         },
         createdAt: {
             type: Date,

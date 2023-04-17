@@ -30,19 +30,27 @@ app.get('/users', async (req, res) => {
 
 app.post('/users', async (req, res) => {
     try {
-        const { fullName, email, password } = req.body;
+        const { fullName, email, password, username, userType } = req.body;
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).send({ message: 'Email already exists' });
+        }
+
         const newUser = new User({
             fullName,
             email,
-            password
+            password,
+            username,
+            userType
         });
-        const response = newUser.save();
-        res.send({ message: "User is registered successfully!" });
-    }
-    catch (err) {
+
+        const response = await newUser.save();
+        res.send({ message: 'User is registered successfully!' });
+    } catch (err) {
         console.log(err);
+        res.status(500).send({ message: 'Internal server error' });
     }
-})
+});
 
 
 app.get('/', (req, res) => {
