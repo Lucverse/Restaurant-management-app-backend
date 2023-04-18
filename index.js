@@ -25,33 +25,54 @@ app.get('/users', async (req, res) => {
 });
 app.post('/users', async (req, res) => {
     try {
-        const { fullName, email, password, username, userType } = req.body;
+        const { fullName, email, password, username, userType, restaurantName } = req.body;
         const existingUserEmail = await User.findOne({ email });
         const existingUsername = await User.findOne({ username });
+        const existingRestaurant = restaurantName ? await User.findOne({ restaurantName }) : null;
 
         if (existingUserEmail) {
             return res.status(400).send({ error: 'Email already in use' });
+        }
+
+        if (existingRestaurant) {
+            return res.status(400).send({ error: 'A restaurant is already registered with that name' });
         }
 
         if (existingUsername) {
             return res.status(400).send({ error: 'Username already in use' });
         }
 
-        const newUser = new User({
-            fullName,
-            email,
-            password,
-            username,
-            userType
-        });
+        let newUser;
+        if (userType === 'staff') {
+            if (!restaurantName) {
+                return res.status(400).send({ error: 'Restaurant name is required for staff users' });
+            }
+            newUser = new User({
+                fullName,
+                email,
+                password,
+                username,
+                userType,
+                restaurantName
+            });
+        } else {
+            newUser = new User({
+                fullName,
+                email,
+                password,
+                username,
+                userType
+            });
+        }
 
         const response = await newUser.save();
-        res.send({ message: 'User is registered successfully!', username: newUser.username }); // Include username in the response
+        res.send({ message: 'User is registered successfully!', username: newUser.username });
     } catch (err) {
         console.log(err);
         res.status(500).send({ message: 'Internal server error' });
     }
 });
+
 
 app.get('/', (req, res) => {
     res.send('expense tracker app backend');
@@ -60,7 +81,7 @@ app.get('/', (req, res) => {
 app.listen(3002, () => {
     console.log('Server listening on port 3002');
 });
-app.get('/update',(req,res)=>{
+app.get('/update', (req, res) => {
     res.send('update');
 })
 app.put('/users/:id', async (req, res) => {
