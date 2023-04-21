@@ -5,8 +5,14 @@ const restaurantSchema = new mongoose.Schema({
         required: true
     },
     staff: {
-        type: [String], 
+        type: [String],
         required: true,
+    },
+    rating: {
+        type: Number
+    },
+    type: {
+        type: String
     },
     createdAt: {
         type: Date,
