@@ -7,10 +7,12 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
+const mongoose = require("mongoose");
+
 const User = require("./models/User");
 const Items = require("./models/Item");
 const Restaurant = require("./models/Restaurant.js");
-const mongoose = require("mongoose");
+const Orders = require("./models/Orders");
 
 mongoose.connect(process.env.MONGOURI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log("Successfully connect to MongoDB."))
@@ -29,14 +31,35 @@ app.get('/items', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
-app.post('/items', async (req, res) => {
+app.post('/orders', async (req, res) => {
     try {
-        const newItem = new Items(req.body);
-        const savedItem = await newItem.save();
-        res.status(200).json(savedItem);
+        const newOrder = new Orders({
+            itemArray: req.body.itemArray,
+            userId: req.body.userId,
+        });
+        const savedOrder = await newOrder.save();
+        res.status(200).json(savedOrder);
     } catch (err) {
         console.error(err);
         res.status(500).send('Server error');
+    }
+});
+app.get('/orders', async (req, res) => {
+    try {
+        const data = await Orders.find({});
+        res.status(200).send(data);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
+});
+app.get('/items/:id', async (req, res) => {
+    try {
+        const newItem = await Items.findById(req.params.id, req.body, { new: true });
+        const savedItem = await newItem.save();
+        res.status(200).json(savedItem);
+    } catch (err) {
+        console.log(err);
     }
 });
 
@@ -88,13 +111,34 @@ app.post('/users', async (req, res) => {
             userType
         });
         const responseUser = await newUser.save();
-        console.log(newUser);
-        res.send({ message: 'User is registered successfully!', username: newUser.username });
+        res.send({ message: 'User is registered successfully!', responseUser });
     } catch (err) {
         console.log(err);
         res.status(500).send({ message: 'Internal server error' });
     }
 });
+
+app.get('/orders', async (req, res) => {
+    try {
+        const data = await Orders.find({});
+        res.status(200).send(data);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
+});
+app.post('/orders', async (req, res) => {
+    try {
+        const { itemArray } = req.body;
+        const newItem = new Orders({ itemArray });
+        const savedItem = await newItem.save();
+        res.status(200).json(savedItem);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
+});
+
 
 app.listen(3002, () => {
     console.log('Server listening on port http://localhost:3002/');
