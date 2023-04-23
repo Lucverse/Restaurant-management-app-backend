@@ -24,13 +24,6 @@ const userSchema = new mongoose.Schema({
         enum: ['customer', 'staff'],
         required: true
     },
-    restaurantName: {
-        type: String,
-        required: function () {
-            return this.userType === 'staff';
-        },
-        unique: true
-    },
     createdAt: {
         type: Date,
         default: Date.now

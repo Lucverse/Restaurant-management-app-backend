@@ -19,15 +19,7 @@ mongoose.connect(process.env.MONGOURI, { useNewUrlParser: true, useUnifiedTopolo
 app.get('/', (req, res) => {
     res.send('Restaurant Management App');
 });
-app.get('/users', async (req, res) => {
-    try {
-        const data = await User.find({});
-        res.status(200).send(data);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Server error');
-    }
-});
+
 app.get('/items', async (req, res) => {
     try {
         const data = await Items.find({});
@@ -67,60 +59,36 @@ app.post('/restaurants', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+app.get('/users', async (req, res) => {
+    try {
+        const data = await User.find({});
+        res.status(200).send(data);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
+});
 app.post('/users', async (req, res) => {
     try {
-        const { fullName, email, password, username, userType, restaurantName } = req.body;
+        const { fullName, email, password, username, userType } = req.body;
         const existingUserEmail = await User.findOne({ email });
         const existingUsername = await User.findOne({ username });
-        const existingRestaurant = restaurantName ? await Restaurant.findOne({ name: restaurantName }) : null;
 
         if (existingUserEmail) {
             return res.status(400).send({ error: 'Email already in use' });
         }
-
-        if (existingRestaurant) {
-            return res.status(400).send({ error: 'A restaurant is already registered with that name' });
-        }
-
         if (existingUsername) {
             return res.status(400).send({ error: 'Username already in use' });
         }
-
-        let newUser;
-        let newRestaurant;
-        if (userType === 'staff') {
-            if (!restaurantName) {
-                return res.status(400).send({ error: 'Restaurant name is required for staff users' });
-            }
-
-            newRestaurant = new Restaurant({
-                restaurantName,
-                staff: username
-            });
-            newUser = new User({
-                fullName,
-                email,
-                password,
-                username,
-                userType,
-                restaurantName
-            });
-        }
-        else {
-            newUser = new User({
-                fullName,
-                email,
-                password,
-                username,
-                userType
-            });
-        }
-
+        let newUser = new User({
+            fullName,
+            email,
+            password,
+            username,
+            userType
+        });
         const responseUser = await newUser.save();
-        if (newRestaurant) {
-            const responseRestaurant = await newRestaurant.save();
-        }
-
+        console.log(newUser);
         res.send({ message: 'User is registered successfully!', username: newUser.username });
     } catch (err) {
         console.log(err);
