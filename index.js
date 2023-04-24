@@ -91,6 +91,24 @@ app.get('/users', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+app.put('/users/:id', async (req, res) => {
+    try {
+        const { fullName, email, password, username, userType } = req.body;
+        const updatedUser = await User.findByIdAndUpdate(req.params.id, {
+            fullName,
+            email,
+            password,
+            username,
+            userType
+        }, { new: true });
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ message: 'Internal server error' });
+    }
+});
+
+  
 app.post('/users', async (req, res) => {
     try {
         const { fullName, email, password, username, userType } = req.body;
