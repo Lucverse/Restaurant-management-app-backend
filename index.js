@@ -110,11 +110,11 @@ app.get('/restaurants/:id', async (req, res) => {
 app.post('/restaurants', async (req, res) => {
     try {
         const newItem = new Restaurant(req.body);
-        const savedItem = await newItem.save();
+        const savedItem = await newItem.save(); 
         res.status(200).json(savedItem);
     } catch (err) {
         console.error(err);
-        res.status(500).send('Server error');
+        res.status(500).send('Server error', err);
     }
 });
 
