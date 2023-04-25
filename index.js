@@ -109,12 +109,24 @@ app.get('/restaurants/:id', async (req, res) => {
 });
 app.post('/restaurants', async (req, res) => {
     try {
-        const newItem = new Restaurant(req.body);
-        const savedItem = await newItem.save(); 
-        res.status(200).json(savedItem);
+        const { restaurantName, userId, email, password, address, openhours, type } = req.body;
+        const existingrestaurantName = await Restaurant.findOne({ restaurantName });
+        if (existingrestaurantName) {
+            return res.status(200).send({ error: 'Restaurant Name already in use' });
+        }
+        const newRestaurant = new Restaurant({
+            restaurantName,
+            staff: [userId],
+            email,
+            password,
+            address,
+            openhours,
+            type
+        });
+        const restResponse = await newRestaurant.save();
+        res.status(200).json({ message: "Restaurant Registration Successful", data: restResponse });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server error', err);
+        res.status(500).send({ message: 'Internal server error' });
     }
 });
 
@@ -153,7 +165,7 @@ app.put('/users/:id', async (req, res) => {
         console.log(err);
         res.status(500).send({ message: 'Internal server error' });
     }
-});  
+});
 app.post('/users', async (req, res) => {
     try {
         const { fullName, email, password, username, userType } = req.body;
