@@ -22,7 +22,6 @@ app.get('/', (req, res) => {
     res.send('Restaurant Management App');
 });
 
-
 // items 
 app.get('/items', async (req, res) => {
     try {
@@ -52,7 +51,6 @@ app.post('/items', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
-
 
 // orders
 app.get('/orders', async (req, res) => {
@@ -86,7 +84,6 @@ app.post('/orders', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
-
 
 // restaurants
 app.get('/restaurants', async (req, res) => {
@@ -129,7 +126,6 @@ app.post('/restaurants', async (req, res) => {
         res.status(500).send({ message: 'Internal server error' });
     }
 });
-
 
 // users
 app.get('/users', async (req, res) => {
