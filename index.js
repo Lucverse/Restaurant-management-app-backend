@@ -62,7 +62,7 @@ app.get('/orders', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
-app.get('/items/:id', async (req, res) => {
+app.get('/orders/:id', async (req, res) => {
     try {
         const newItem = await Orders.findById(req.params.id, req.body, { new: true });
         const savedItem = await newItem.save();
@@ -71,6 +71,16 @@ app.get('/items/:id', async (req, res) => {
         console.log(err);
     }
 });
+app.get('/orders/user/:userId', async (req, res) => {
+    try {
+      const data = await Orders.find({ userId: req.params.userId });
+      res.status(200).send(data);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Server error');
+    }
+  });
+  
 app.post('/orders', async (req, res) => {
     try {
         const newOrder = new Orders({
