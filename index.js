@@ -73,14 +73,13 @@ app.get('/orders/:id', async (req, res) => {
 });
 app.get('/orders/user/:userId', async (req, res) => {
     try {
-      const data = await Orders.find({ userId: req.params.userId });
-      res.status(200).send(data);
+        const data = await Orders.find({ userId: req.params.userId });
+        res.status(200).send(data);
     } catch (err) {
-      console.error(err);
-      res.status(500).send('Server error');
+        console.error(err);
+        res.status(500).send('Server error');
     }
-  });
-  
+});
 app.post('/orders', async (req, res) => {
     try {
         const newOrder = new Orders({
@@ -198,8 +197,6 @@ app.post('/users', async (req, res) => {
         res.status(500).send({ message: 'Internal server error' });
     }
 });
-
-
 
 app.listen(3002, () => {
     console.log('Server listening on port http://localhost:3002/');
