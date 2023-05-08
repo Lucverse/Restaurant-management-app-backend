@@ -50,6 +50,14 @@ app.post('/post', async (req, res) => {
     }
 })
 // Update a post
+app.get('/post/:id', async (req, res) => {
+    try {
+        const updatedPost = await Post.findById(req.params.id, req.body, { new: true });
+        res.send({ message: "Post updated successfully!", post: updatedPost });
+    } catch (err) {
+        console.log(err);
+    }
+});
 app.put('/post/:id', async (req, res) => {
     try {
         const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });
