@@ -1,87 +1,61 @@
-// for using dotenv files
 require("dotenv").config();
 
+const cors = require("cors");
 const express = require('express');
 const bodyParser = require("body-parser");
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 
-// connection starts
-const User = require("./models/User");
-const Post = require('./models/Post');
 const mongoose = require("mongoose");
 
+const Todo = require("./models/Todo");
+
 mongoose.connect(process.env.MONGOURI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log("Successfully connect to MongoDB."))
-    .catch(err => console.error(err));
-// connection ends
-
-// get all users
-app.get('/users', async (req, res) => {
-    try {
-        const data = await User.find({});
-        res.status(200).send(data);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Server error');
-    }
-});
-app.get('/post', async (req, res) => {
-    try {
-        const data = await Post.find({});
-        res.status(200).send(data);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Server error');
-    }
-});
-app.post('/post', async (req, res) => {
-    try {
-        const { title, body } = req.body;
-        const newPost = new Post({
-            title, // means title : title
-            body    // means body : body
-        });
-        const response = newPost.save();
-        res.send({ message: "Post is created successfully!" });
-    }
-    catch (err) {
-        console.log(err);
-    }
-})
-// Update a post
-app.get('/post/:id', async (req, res) => {
-    try {
-        const updatedPost = await Post.findById(req.params.id, req.body, { new: true });
-        res.send({ message: "Post updated successfully!", post: updatedPost });
-    } catch (err) {
-        console.log(err);
-    }
-});
-app.put('/post/:id', async (req, res) => {
-    try {
-        const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        res.send({ message: "Post updated successfully!", post: updatedPost });
-    } catch (err) {
-        console.log(err);
-    }
-});
-
-// Delete a post
-app.delete('/post/:id', async (req, res) => {
-    try {
-        const deletedPost = await Post.findByIdAndDelete(req.params.id);
-        res.send({ message: "Post deleted successfully!", post: deletedPost });
-    } catch (err) {
-        console.log(err);
-    }
-});
+  .then(() => console.log("Successfully connected to MongoDB."))
+  .catch(err => console.error(err));
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+  res.send('Todo List');
 });
 
-// function starts the server (necessary)
-app.listen(3000, () => {
-    console.log('Server listening on port 3000');
+// Get all todos
+app.get('/todos', async (req, res) => {
+  try {
+    const todos = await Todo.find({});
+    res.status(200).json(todos);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+});
+
+// Get a specific todo by ID
+app.get('/todos/:id', async (req, res) => {
+  try {
+    const todo = await Todo.findById(req.params.id);
+    if (!todo) {
+      return res.status(404).json({ message: 'Todo not found' });
+    }
+    res.status(200).json(todo);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+});
+
+// Create a new todo
+app.post('/todos', async (req, res) => {
+  try {
+    const newTodo = new Todo(req.body);
+    const savedTodo = await newTodo.save();
+    res.status(201).json(savedTodo);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+});
+
+app.listen(3002, () => {
+  console.log('Server listening on port http://localhost:3002/');
 });
