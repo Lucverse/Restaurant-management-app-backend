@@ -16,7 +16,7 @@ mongoose.connect(process.env.MONGOURI, { useNewUrlParser: true, useUnifiedTopolo
   .catch(err => console.error(err));
 
 app.get('/', (req, res) => {
-  res.send('Todo List');
+  res.send('Todo List'); 
 });
 
 // Get all todos
