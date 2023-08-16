@@ -9,10 +9,10 @@ app.use(cors());
 
 const mongoose = require("mongoose");
 
-const User = require("./models/User");
+const User = require("./models/User.js");
 const Items = require("./models/Item.js");
 const Restaurant = require("./models/Restaurant.js");
-const Orders = require("./models/Orders");
+const Orders = require("./models/Orders.js");
 const Recipe = require("./models/Recipe");
 
 mongoose.connect(process.env.MONGOURI, { useNewUrlParser: true, useUnifiedTopology: true })
