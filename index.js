@@ -13,6 +13,7 @@ const User = require("./models/User");
 const Items = require("./models/Item");
 const Restaurant = require("./models/Restaurant.js");
 const Orders = require("./models/Orders");
+const Recipe = require("./models/Recipe");
 
 mongoose.connect(process.env.MONGOURI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log("Successfully connect to MongoDB."))
@@ -41,7 +42,7 @@ app.get('/items/:id', async (req, res) => {
         console.log(err);
     }
 });
-app.post('/items', async (req, res) => {
+app.post('/items', async (req, res) => {b
     try {
         const newItem = new Items(req.body);
         const savedItem = await newItem.save();
@@ -198,6 +199,16 @@ app.post('/users', async (req, res) => {
     }
 });
 
+// recipe
+app.get('/recipe', async (req, res) => {
+    try {
+        const data = await Recipe.find({});
+        res.status(200).send(data);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
+});
 app.listen(3002, () => {
     console.log('Server listening on port http://localhost:3002/');
 });
