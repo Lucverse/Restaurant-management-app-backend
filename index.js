@@ -10,7 +10,7 @@ app.use(cors());
 const mongoose = require("mongoose");
 
 const User = require("./models/User");
-const Items = require("./models/Item");
+const Items = require("./models/Item.js");
 const Restaurant = require("./models/Restaurant.js");
 const Orders = require("./models/Orders");
 const Recipe = require("./models/Recipe");
@@ -209,6 +209,8 @@ app.get('/recipe', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
+
 app.listen(3002, () => {
     console.log('Server listening on port http://localhost:3002/');
 });
