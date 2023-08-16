@@ -22,6 +22,9 @@ const restaurantSchema = new mongoose.Schema({
     type: {
         type: String
     },
+    description: {
+        type: String
+    },
     createdAt: {
         type: Date,
         default: Date.now
